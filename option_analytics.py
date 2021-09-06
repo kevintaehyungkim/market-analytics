@@ -1,7 +1,7 @@
 import sys
 import time
 
-import api.yahoo_finance as yfin
+import api.yahoo_finance as yfin_api
 # import utils as utils
 
 
@@ -11,7 +11,7 @@ Given stock symbol and number of days to limit option expiry,
 returns all implied prices for the symbol based on available option expiry dates.
 '''
 def find_all_implied_prices(symbol, expiry_limit_days=90):
-	option_data = yfin.get_option_data(symbol, expiry_limit_days)
+	option_data = yfin_api.get_option_data(symbol, expiry_limit_days)
 	implied_prices = {}
 
 	print('\nSymbol: ', symbol)
@@ -28,7 +28,7 @@ Given stock symbol and option expiry date (unix timestamp),
 returns the implied price for the symbol based on the option chain.
 '''
 def find_implied_price(symbol, exp_timestamp):
-	option_chain = yfin.get_option_chain(symbol, exp_timestamp)
+	option_chain = yfin_api.get_option_chain(symbol, exp_timestamp)
 	exp_time = time.localtime(exp_timestamp)
 	exp_time_formatted = time.strftime("%Y-%m-%d", exp_time)
 
@@ -112,10 +112,17 @@ def calculate_vol_implied_price(call_chain, put_chain):
 
 ### TODO ###
 
+'''
+Given an option contract, calculate optimal stock price points for stop loss
+'''
 def calculate_optimal_stop_loss():
 	return
 
-def calculate_optimal_limit():
+
+'''
+Given an option contract, calculate optimal stock price points for limit sell
+'''
+def calculate_optimal_limit_sell():
 	return 
 
 
