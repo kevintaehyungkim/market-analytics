@@ -12,7 +12,7 @@ It seems to be very difficult to replace the professionalism of an experienced t
 whose results can increase the profits for traders. 
 
 
-The goal of this project is to utilize regression and classifying techniques to construct a model that best understands the how different market indices and conditions inter-operate and factor into the share prices for SPY and QQQ, as well as large-cap cryptocurrencies. The accuracy of an algorithm is directly proportional to gains made by using the algorithm.
+The goal of this project is to utilize regression and classifying techniques to construct a model that best understands the how different market indices and conditions inter-operate and factor into the share prices for SPY and QQQ, large-cap stocks, as well as top cryptocurrencies. The accuracy of an algorithm is directly proportional to gains made by using the algorithm during historical back-testing.
 
 
 ### Technical Requirements: 
