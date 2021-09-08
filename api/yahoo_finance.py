@@ -21,7 +21,7 @@ Returns:
 '''
 def get_option_data(symbol, exp_limit_days=90): 
 	req_url = OPTIONS_BASE_URL + symbol
-	req_headers = {'accept': 'application/json', 'X-API-KEY': API_KEY_1}
+	req_headers = {'accept': 'application/json', 'X-API-KEY': API_KEY_3}
 
 	res = requests.get(req_url, headers=req_headers)
 	data = res.json()["optionChain"]["result"][0]
@@ -39,7 +39,7 @@ Get option chain for stock symbol and expiry date timestamp
 '''
 def get_option_chain(symbol, exp_date=None): 
 	req_url = OPTIONS_BASE_URL + symbol
-	req_headers = {'accept': 'application/json', 'X-API-KEY': API_KEY_1}
+	req_headers = {'accept': 'application/json', 'X-API-KEY': API_KEY_3}
 
 	if exp_date:
 		req_url += '?date=' + str(exp_date)

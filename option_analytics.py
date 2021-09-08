@@ -4,14 +4,14 @@ import time
 import api.yahoo_finance as yfin_api
 # import utils as utils
 
-
+CALL=''
 
 '''
 Given stock symbol and number of days to limit option expiry,
 returns all implied prices for the symbol based on available option expiry dates.
 '''
-def find_all_implied_prices(symbol, expiry_limit_days=90):
-	option_data = yfin_api.get_option_data(symbol, expiry_limit_days)
+def find_all_implied_prices(symbol, start, end=180):
+	option_data = yfin_api.get_option_data(symbol, end)
 	implied_prices = {}
 
 	print('\nSymbol: ', symbol)
@@ -133,7 +133,7 @@ def calculate_optimal_limit_sell():
 ### temporary script ###
 ########################
 
-find_all_implied_prices('SPY', 90)
+find_all_implied_prices('SPY', 0, 360)
 
 
 
