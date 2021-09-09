@@ -38,3 +38,6 @@ def find_price_channels():
 
 def find_trend_lines():
 	return 
+
+def find_100d_volume_profile():
+	return

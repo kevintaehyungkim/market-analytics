@@ -3,13 +3,18 @@ import sys
 import time
 import json
 
+import api.api_utils as api_utils
+
 
 API_KEY_1="DtlhadqMLT3QwPr3xiDND3CqlVO8fR8G9CvR3c2j"
 API_KEY_2="4EM8PpTyLI4tn5a8tV0FJ9ibWDOobi2E9UQ2O4C0"
 API_KEY_3="XZHiaPkyah38SHu5SQ5zP2Nf0SdUYGiBaktnQQbj"
 
-OPTIONS_BASE_URL="https://yfapi.net/v7/finance/options/"
+API_KEYS = [API_KEY_1, API_KEY_2, API_KEY_3]
+API_KEY_STRING = 'X-API-KEY'
 
+
+OPTIONS_BASE_URL="https://yfapi.net/v7/finance/options/"
 
 
 '''
@@ -21,7 +26,7 @@ Returns:
 '''
 def get_option_data(symbol, exp_limit_days=90): 
 	req_url = OPTIONS_BASE_URL + symbol
-	req_headers = {'accept': 'application/json', 'X-API-KEY': API_KEY_3}
+	req_headers = {'accept': 'application/json', API_KEY_STRING: API_KEY_3}
 
 	res = requests.get(req_url, headers=req_headers)
 	data = res.json()["optionChain"]["result"][0]
@@ -39,7 +44,7 @@ Get option chain for stock symbol and expiry date timestamp
 '''
 def get_option_chain(symbol, exp_date=None): 
 	req_url = OPTIONS_BASE_URL + symbol
-	req_headers = {'accept': 'application/json', 'X-API-KEY': API_KEY_3}
+	req_headers = {'accept': 'application/json', API_KEY_STRING: API_KEY_3}
 
 	if exp_date:
 		req_url += '?date=' + str(exp_date)
@@ -53,58 +58,25 @@ def get_option_chain(symbol, exp_date=None):
 	return call_chain, put_chain
 
 
-# '''
-# Calculates the option chain open-interest implied price
-# '''
-# def calculate_oi_implied_price(call_chain, put_chain):
-# 	sum_calls, call_oi = 0, 0
-# 	sum_puts, put_oi = 0, 0
 
-# 	for call in call_chain:
-# 		sum_calls += call['strike']*call.get('openInterest', 0)
-# 		call_oi += call.get('openInterest', 0)
+'''
+Get option chain information for stock symbol and expiry day limit
 
-# 	for put in put_chain:
-# 		sum_puts += put['strike']*put.get('openInterest', 0)
-# 		put_oi += put.get('openInterest', 0)
+Returns:
+- current price (float)
+- contract expiry timestamps up to the day limit (array)
+'''
+def find_expiry_timestamps(symbol, exp_limit_days=90): 
+	req_url = OPTIONS_BASE_URL + symbol
+	req_headers = {'accept': 'application/json', API_KEY_STRING: API_KEY_3}
 
-# 	call_oi_implied_price = sum_calls/call_oi
-# 	put_oi_implied_price = sum_puts/put_oi
-# 	oi_implied_price = (sum_calls+sum_puts)/(call_oi+put_oi)
+	res = requests.get(req_url, headers=req_headers)
+	data = res.json()["optionChain"]["result"][0]
+	quote = data['quote']
 
+	exp_dates = filter_expiry_timestamps(data["expirationDates"], exp_limit_days)
 
-
-# 	print ('OI implied value: ${:.2f}'.format(oi_implied_price))
-# 	print ('-> Call OI implied value: ${:.2f}'.format(call_oi_implied_price) + ' | #contracts: ' + str(call_oi))
-# 	print ('-> Put OI implied value: ${:.2f}'.format(put_oi_implied_price) + ' | #contracts: ' + str(put_oi))
-
-# 	return oi_implied_price
-
-
-# '''
-# Calculates the option chain volume implied price
-# '''
-# def calculate_vol_implied_price(call_chain, put_chain):
-# 	sum_calls, call_vol = 0, 0
-# 	sum_puts, put_vol = 0, 0
-
-# 	for call in call_chain:
-# 		sum_calls += call['strike']*call.get('volume', 0)
-# 		call_vol += call.get('volume', 0)
-
-# 	for put in put_chain:
-# 		sum_puts += put['strike']*put.get('volume', 0)
-# 		put_vol += put.get('volume', 0)
-
-# 	call_vol_implied_price = sum_calls/call_vol
-# 	put_vol_implied_price = sum_puts/put_vol
-# 	vol_implied_price = (sum_calls+sum_puts)/(call_vol+put_vol)
-
-# 	print ('Volume implied value: ${:.2f}'.format(vol_implied_price))
-# 	print ('-> Call volume implied value: ${:.2f}'.format(call_vol_implied_price) + ' | #contracts: ' + str(call_vol))
-# 	print ('-> Put volume implied value: ${:.2f}'.format(put_vol_implied_price) + ' | #contracts: ' + str(put_vol))
-
-# 	return vol_implied_price
+	return exp_dates
 
 
 

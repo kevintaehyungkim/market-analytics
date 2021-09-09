@@ -59,12 +59,16 @@ def calculate_oi_implied_price(call_chain, put_chain):
 	sum_puts, put_contract_count = 0, 0
 
 	for call in call_chain:
-		sum_calls += call['strike']*call.get('openInterest', 0)
-		call_contract_count += call.get('openInterest', 0)
+		strike_call_oi, call_ask_price = call.get('openInterest', 0), call.get('ask', 0)
+		if strike_call_oi > 0 and call_ask_price > 0.05:
+			sum_calls += call['strike'] * strike_call_oi
+			call_contract_count += strike_call_oi
 
 	for put in put_chain:
-		sum_puts += put['strike']*put.get('openInterest', 0)
-		put_contract_count += put.get('openInterest', 0)
+		strike_put_oi, put_ask_price = put.get('openInterest', 0), put.get('ask', 0)
+		if strike_put_oi > 0 and put_ask_price > 0.05:
+			sum_puts += put['strike'] * strike_put_oi
+			put_contract_count += strike_put_oi
 
 	call_oi_implied_price = sum_calls/call_contract_count
 	put_oi_implied_price = sum_puts/put_contract_count
@@ -87,12 +91,16 @@ def calculate_vol_implied_price(call_chain, put_chain):
 	sum_puts, put_contract_count = 0, 0
 
 	for call in call_chain:
-		sum_calls += call['strike']*call.get('volume', 0)
-		call_contract_count += call.get('volume', 0)
+		strike_call_volume, call_ask_price = call.get('volume', 0), call.get('ask', 0)
+		if strike_call_volume > 0 and call_ask_price > 0.05:
+			sum_calls += call['strike'] * strike_call_volume
+			call_contract_count += strike_call_volume
 
 	for put in put_chain:
-		sum_puts += put['strike']*put.get('volume', 0)
-		put_contract_count += put.get('volume', 0)
+		strike_put_volume, put_ask_price = put.get('volume', 0), put.get('ask', 0)
+		if strike_put_volume > 0 and put_ask_price > 0.05:
+			sum_puts += put['strike'] * strike_put_volume
+			put_contract_count += strike_put_volume
 
 	call_vol_implied_price = sum_calls/call_contract_count
 	put_vol_implied_price = sum_puts/put_contract_count
@@ -133,7 +141,7 @@ def calculate_optimal_limit_sell():
 ### temporary script ###
 ########################
 
-find_all_implied_prices('SPY', 0, 360)
+find_all_implied_prices('SPY', 0, 60)
 
 
 
