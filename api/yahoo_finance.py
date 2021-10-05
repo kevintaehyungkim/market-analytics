@@ -18,6 +18,13 @@ OPTIONS_BASE_URL="https://yfapi.net/v7/finance/options/"
 
 
 '''
+Get stock symbol information
+'''
+def get_stock_data(symbol):
+	return
+
+
+'''
 Get option chain information for stock symbol and expiry day limit
 
 Returns:
