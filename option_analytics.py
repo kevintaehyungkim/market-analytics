@@ -247,8 +247,12 @@ def calculate_optimal_limit_sell():
 # 	print(arg)
 
 
-# symbol = sys.argv[1]
+'''
+Usage: 
 
+python3 option_analytics.py SPY
+python3 option_analytics.py QQQ
+'''
 find_all_implied_prices(sys.argv[1], 0, 7)
 
 
