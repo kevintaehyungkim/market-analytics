@@ -5,7 +5,7 @@ import json
 
 import api.api_utils as api_utils
 
-
+API_KEY_PRO="DtlhadqMLT3QwPr3xiDND3CqlVO8fR8G9CvR3c2j"
 API_KEY_1="DtlhadqMLT3QwPr3xiDND3CqlVO8fR8G9CvR3c2j"
 API_KEY_2="4EM8PpTyLI4tn5a8tV0FJ9ibWDOobi2E9UQ2O4C0"
 API_KEY_3="XZHiaPkyah38SHu5SQ5zP2Nf0SdUYGiBaktnQQbj"
@@ -33,7 +33,7 @@ Returns:
 '''
 def get_option_data(symbol, exp_limit_days=90): 
 	req_url = OPTIONS_BASE_URL + symbol
-	req_headers = {'accept': 'application/json', API_KEY_STRING: API_KEY_2}
+	req_headers = {'accept': 'application/json', API_KEY_STRING: API_KEY_PRO}
 
 	res = requests.get(req_url, headers=req_headers)
 	data = res.json()["optionChain"]["result"][0]
@@ -51,7 +51,7 @@ Get option chain for stock symbol and expiry date timestamp
 '''
 def get_option_chain(symbol, exp_date=None): 
 	req_url = OPTIONS_BASE_URL + symbol
-	req_headers = {'accept': 'application/json', API_KEY_STRING: API_KEY_2}
+	req_headers = {'accept': 'application/json', API_KEY_STRING: API_KEY_PRO}
 
 	if exp_date:
 		req_url += '?date=' + str(exp_date)
@@ -63,6 +63,15 @@ def get_option_chain(symbol, exp_date=None):
 	call_chain, put_chain = option_chain['calls'], option_chain['puts']
 
 	return call_chain, put_chain
+
+
+
+def get_option_expiry_dates(symbol):
+	option_chain = get_option_chain(symbol, exp_timestamp)
+	exp_time = time.localtime(exp_timestamp)
+	exp_time_formatted = time.strftime("%Y-%m-%d", exp_time)
+
+
 
 
 
@@ -100,44 +109,3 @@ def filter_expiry_timestamps(expiry_timestamps, days):
 
 
 
-
-
-
-
-
-
-
-
-
-'''
-#jim simmons
-#price, volume, volatility
-
-spy, qqq 
-- large market-cap
-- daily candles only 
-
-1. one of the variables
-price - high, mid, low (channels, moving averages)
-volume - high, mid, low
-volatility - high, mid, low
-
-2^3 = 8 sections
-
-
-2. options volume/oi on strikes
-
-
-3. dollar index(dxy), yields(us10y), junk bonds
-
-
-
-- unusual large amount otm - not hedging?
-
-
-- 1 strategy = 1 set of outcomes that will be optimal
-- multiple strategies = series of strategies -> more 
-
-higher gamma - buy more shares to stay hedged
-
-'''

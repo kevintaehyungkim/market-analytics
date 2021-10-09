@@ -22,11 +22,12 @@ def find_all_implied_prices(symbol, start, end=90):
 	print('Current Price: ${:0.2f}'.format(option_data[0]))
 
 	for expiry_timestamp in option_data[1]:
-		implied_prices[expiry_timestamp]=find_implied_price(symbol, expiry_timestamp)
+		option_data = find_implied_price(symbol, expiry_timestamp)
+		implied_prices[option_data[0]]=option_data[1:]
 
-	s = sched.scheduler(time.time, time.sleep)
-	s.enter(600, 1, find_all_implied_prices, (symbol, start, end,))
-	s.run()
+	# s = sched.scheduler(time.time, time.sleep)
+	# s.enter(600, 1, find_all_implied_prices, (symbol, start, end,))
+	# s.run()
 
 	return implied_prices
 
@@ -38,7 +39,7 @@ returns the implied price for the symbol based on the option chain.
 def find_implied_price(symbol, exp_timestamp):
 	option_chain = yfin_api.get_option_chain(symbol, exp_timestamp)
 	exp_time = time.localtime(exp_timestamp)
-	exp_time_formatted = time.strftime("%Y-%m-%d", exp_time)
+	exp_time_formatted = time.strftime("%m-%d-%Y", exp_time)
 
 	symbol_expiry = symbol + ' ' + exp_time_formatted
 	header = '*'*len(symbol_expiry)
@@ -47,12 +48,12 @@ def find_implied_price(symbol, exp_timestamp):
 	print(symbol_expiry)
 	print(header)
 
-	vol_implied_price = calculate_volume_stats(option_chain[0], option_chain[1])
-	oi_implied_price = calculate_oi_stats(option_chain[0], option_chain[1])
+	vol_stats = calculate_volume_stats(option_chain[0], option_chain[1])
+	oi_stats = calculate_oi_stats(option_chain[0], option_chain[1])
 
-	find_optimal_expiry_price(option_chain[0], option_chain[1])
+	optimal_expiry_price = find_optimal_expiry_price(option_chain[0], option_chain[1])
 
-	return [vol_implied_price, oi_implied_price]
+	return [exp_time_formatted, oi_stats, vol_stats, optimal_expiry_price]
 
 
 
@@ -144,14 +145,16 @@ def calculate_oi_stats(call_chain, put_chain):
 	print ('> Calls: ' + calculate_percent_string(call_contract_count,total_contract_count) + ' | Puts: ' + calculate_percent_string(put_contract_count,total_contract_count))
 
 	print('Call Walls: ')
-	for cs in find_most_traded_strikes(call_strikes_oi):
+	most_traded_call_strikes = find_most_traded_strikes(call_strikes_oi)
+	for cs in most_traded_call_strikes:
 		print('> $' + cs + ': ' + str(call_strikes_oi[cs]))
 
 	print('Put Walls: ')
-	for ps in find_most_traded_strikes(put_strikes_oi):
+	most_traded_put_strikes = find_most_traded_strikes(put_strikes_oi)
+	for ps in most_traded_put_strikes:
 		print('> $' + ps + ': ' + str(put_strikes_oi[ps]))
 
-	return oi_implied_price
+	return [oi_implied_price, most_traded_call_strikes, most_traded_put_strikes]
 
 
 '''
@@ -236,27 +239,13 @@ def calculate_optimal_limit_sell():
 ########################
 ### temporary script ###
 ########################
-
-# s = sched.scheduler(time.time, time.sleep)
-# s.enter(60, 1, find_all_implied_prices, (sys.argv[1], 0, 7,))
-# s.run()
-
-
-
-# for arg in sys.argv:
-# 	print(arg)
-
-
 '''
 Usage: 
 
 python3 option_analytics.py SPY
 python3 option_analytics.py QQQ
 '''
-find_all_implied_prices(sys.argv[1], 0, 7)
 
-
-# 70% worthless
-
+# find_all_implied_prices(sys.argv[1], 0, 5)
 
 
