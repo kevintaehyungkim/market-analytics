@@ -16,8 +16,11 @@ import plotly.graph_objects as go
 import plotly.io as pio
 import numpy as np
 
+TICK_COUNT = 12
+Y_INTERVALS = [1, 5, 10, 20, 25, 40, 50, 100, 200]
 
 # pio.templates.default = 'dark'
+
 
 def generate_plot(symbol, days):
 	option_data = option_analytics.find_all_implied_prices(symbol, 0, int(days))
@@ -33,23 +36,25 @@ def generate_plot(symbol, days):
 	yp, yp_upper, yp_lower = [], [], []
 
 	for option_expiry in option_data.keys():
-		oi_strikes_calls = [float(i) for i in option_data[option_expiry][0][1]]
-		oi_strikes_puts = [float(i) for i in option_data[option_expiry][0][2]]
+		oi_top_strikes_calls = [float(i) for i in option_data[option_expiry][0][1]]
+		oi_top_strikes_puts = [float(i) for i in option_data[option_expiry][0][2]]
 
 		oi_implied_prices.append(option_data[option_expiry][0][0])
 		vol_implied_prices.append(option_data[option_expiry][1])
 		max_pain_prices.append(option_data[option_expiry][2])
 
-		yc.append(oi_strikes_calls[0])
-		yc_upper.append(max(oi_strikes_calls))
-		yc_lower.append(min(oi_strikes_calls))
+		yc.append(oi_top_strikes_calls[0])
+		yc_upper.append(max(oi_top_strikes_calls))
+		yc_lower.append(min(oi_top_strikes_calls))
 
-		yp.append(oi_strikes_puts[0])
-		yp_upper.append(max(oi_strikes_puts))
-		yp_lower.append(min(oi_strikes_puts))
+		yp.append(oi_top_strikes_puts[0])
+		yp_upper.append(max(oi_top_strikes_puts))
+		yp_lower.append(min(oi_top_strikes_puts))
 
 	yc_lower = yc_lower[::-1]
 	yp_lower = yp_lower[::-1]
+
+	y_dtick = find_y_dtick(yc_upper+yc_lower, yp_upper+yp_lower)
 
 
 	fig = go.Figure()
@@ -128,7 +133,7 @@ def generate_plot(symbol, days):
 	# Fix Zoom Ratio 
 	fig.update_yaxes(scaleanchor = "x", scaleratio = 1)
 	fig.update_yaxes(
-		dtick=5,
+		dtick=y_dtick,
 		tickprefix="$",
         title_text="Strike",
         title_font={"size": 20},
@@ -185,6 +190,23 @@ def generate_plot(symbol, days):
 	438.0]
 }
 '''
+def find_y_dtick(y_calls, y_puts):
+	y_all = y_calls + y_puts
+	y_gmax, y_gmin = max(y_all), min(y_all)
+
+	y_interval = (y_gmax-y_gmin)/TICK_COUNT
+	y_dtick = find_nearest(Y_INTERVALS, y_interval)
+
+	print(y_interval)
+
+	return y_dtick
+
+
+def find_nearest(array, value):
+    array = np.asarray(array)
+    idx = (np.abs(array - value)).argmin()
+    return array[idx]
+
 
 
 ########################
