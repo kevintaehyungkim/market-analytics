@@ -8,15 +8,24 @@ https://seaborn.pydata.org/examples/grouped_violinplots.html
 
 # Overlap Scatter Plot on top of violin plot
 https://stackoverflow.com/questions/59358115/add-one-specific-datapoint-marker-to-boxplot-or-violinplot-using-holoviews-hv
+
+# Plotly Subtitle
+https://towardsdatascience.com/a-clean-style-for-plotly-charts-250ba2f5f015
 '''
 
-import sys
+import sys, time
 import option_analytics as option_analytics
 import plotly.graph_objects as go
 import plotly.io as pio
 import numpy as np
 
-TICK_COUNT = 12
+from datetime import datetime
+from pytz import timezone
+
+
+OI_TICK_COUNT = 0
+MAX_PAIN_TICK_COUNT = 0
+OPTION_ANALYTICS_TICK_COUNT = 12
 Y_INTERVALS = [1, 5, 10, 20, 25, 40, 50, 100, 200]
 
 # pio.templates.default = 'dark'
@@ -54,7 +63,7 @@ def generate_plot(symbol, days):
 	yc_lower = yc_lower[::-1]
 	yp_lower = yp_lower[::-1]
 
-	y_dtick = find_y_dtick(yc_upper+yc_lower, yp_upper+yp_lower)
+	y_dtick = find_y_dtick(yc_upper+yc_lower, yp_upper+yp_lower, OPTION_ANALYTICS_TICK_COUNT)
 
 
 	fig = go.Figure()
@@ -148,15 +157,26 @@ def generate_plot(symbol, days):
 	# Set figure title
 	symbol_bold = '<b>' + symbol + "</b>"
 	fig.update_layout(template='plotly_dark')
-	fig.update_layout(title_text= symbol_bold + " Option Chain Analytics", title_font = {"size": 24})
-	fig.update_layout(
-		margin=dict(
-        l=140,
-        r=140,
-        b=140,
-        t=140,
-        pad=4)
+	fig.update_layout(title_text=format_title(symbol_bold + " Option Chain Analytics", "Last Updated: " + get_updated_time()), title_font = {"size": 24})
+	fig.update_layout(margin=dict(
+		l=140, 
+		r=140, 
+		b=140, 
+		t=140, 
+		pad=4)
 	)
+
+	# # plot 2 
+	# fig.add_trace(
+ #    	go.Scatter(
+	#         x=[1,2,3],
+	#         y=[1,2,3],
+	#         mode="lines",
+	#         name="mining revenue"
+	#     ),
+	#     row=3, col=1
+	# )	
+
 
 	# Background Color
 		#1: 61D3D3
@@ -190,14 +210,12 @@ def generate_plot(symbol, days):
 	438.0]
 }
 '''
-def find_y_dtick(y_calls, y_puts):
+def find_y_dtick(y_calls, y_puts, num_intervals):
 	y_all = y_calls + y_puts
 	y_gmax, y_gmin = max(y_all), min(y_all)
 
-	y_interval = (y_gmax-y_gmin)/TICK_COUNT
+	y_interval = (y_gmax-y_gmin)/num_intervals
 	y_dtick = find_nearest(Y_INTERVALS, y_interval)
-
-	print(y_interval)
 
 	return y_dtick
 
@@ -206,6 +224,22 @@ def find_nearest(array, value):
     array = np.asarray(array)
     idx = (np.abs(array - value)).argmin()
     return array[idx]
+
+
+def format_title(title, subtitle=None, subtitle_font_size=14):
+    title = f'<b>{title}</b>'
+    if not subtitle:
+        return title
+    subtitle = f'<span style="font-size: {subtitle_font_size}px;">{subtitle}</span>'
+    return f'{title}<br>{subtitle}'
+
+
+def get_updated_time():
+	tz = timezone('US/Eastern')
+	date_now = datetime.now(tz) 
+	time_str = date_now.strftime("%b %d %Y %H:%M UTC-4").upper()
+
+	return time_str
 
 
 
