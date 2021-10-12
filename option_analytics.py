@@ -64,7 +64,7 @@ returns the optimal expiry price for MMs to pay out least in premiums.
 def find_optimal_expiry_price(call_chain, put_chain):
 	expiry_strikes = [contract['strike'] for contract in call_chain]
 	min_strike, max_strike = min(expiry_strikes), max(expiry_strikes)
-	expiry_price_range = np.arange(min_strike, max_strike, 0.1).round(2).tolist()
+	expiry_price_range = np.arange(min_strike, max_strike, 0.2).round(2).tolist()
 
 	premiums_paid = {}
 
@@ -75,11 +75,11 @@ def find_optimal_expiry_price(call_chain, put_chain):
 		premium_paid = 0
 		for call_strike in call_oi:
 			if call_strike < exp_price:
-				premium_paid += (exp_price-call_strike)*call_oi[call_strike]
+				premium_paid += (exp_price-call_strike)*call_oi[call_strike]*100
 
 		for put_strike in put_oi:
 			if put_strike > exp_price:
-				premium_paid += (put_strike-exp_price)*put_oi[put_strike]
+				premium_paid += (put_strike-exp_price)*put_oi[put_strike]*100
 
 		premiums_paid[exp_price] = premium_paid
 
@@ -88,7 +88,7 @@ def find_optimal_expiry_price(call_chain, put_chain):
 	print ('MM Optimal Expiry: ${:.2f}'.format(lowest_prem_strike))
 	# print('> ' + str(lowest_prem_strikes))
 
-	return lowest_prem_strike
+	return (lowest_prem_strike, premiums_paid)
 
 
 def find_estimated_range():
@@ -117,9 +117,14 @@ def calculate_oi_stats(call_chain, put_chain):
 	call_strikes_oi = {}
 	put_strikes_oi = {}
 
+	call_strikes_oi_all = {}
+	put_strikes_oi_all = {}
+
 	for call in call_chain:
 		strike_price = call['strike']
 		strike_oi, ask_price = call.get('openInterest', 0), call.get('ask', 0)
+		call_strikes_oi_all[str(strike_price)] = strike_oi
+
 		if strike_oi > 0 and ask_price > 0.1:
 			sum_calls += strike_price * strike_oi
 			call_contract_count += strike_oi
@@ -128,6 +133,8 @@ def calculate_oi_stats(call_chain, put_chain):
 	for put in put_chain:
 		strike_price = put['strike']
 		strike_oi, ask_price = put.get('openInterest', 0), put.get('ask', 0)
+		put_strikes_oi_all[str(strike_price)] = strike_oi
+
 		if strike_oi > 0 and ask_price > 0.1:
 			sum_puts += put['strike'] * strike_oi
 			put_contract_count += strike_oi
@@ -154,7 +161,7 @@ def calculate_oi_stats(call_chain, put_chain):
 	for ps in most_traded_put_strikes:
 		print('> $' + ps + ': ' + str(put_strikes_oi[ps]))
 
-	return [oi_implied_price, most_traded_call_strikes, most_traded_put_strikes]
+	return [oi_implied_price, (most_traded_call_strikes, call_strikes_oi_all), (most_traded_put_strikes, put_strikes_oi_all)]
 
 
 '''
