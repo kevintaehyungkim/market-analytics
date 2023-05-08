@@ -253,6 +253,12 @@ python3 option_analytics.py SPY
 python3 option_analytics.py QQQ
 '''
 
-# find_all_implied_prices(sys.argv[1], 0, 5)
+find_all_implied_prices(sys.argv[1], 0, 45)
 
 
+
+'''
+elasticity -> how far is it extended out right now 
+
+
+'''

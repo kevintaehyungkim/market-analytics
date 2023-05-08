@@ -21,3 +21,14 @@ def make_request(url, key_string, api_keys):
 
 	raise RuntimeError("No available API key")
 
+
+def load_json(filepath): 
+	f = open(filepath)
+	data = json.load(f) 
+	return data
+
+
+def create_json(filepath, data): 
+	with open('dates.json', 'w', encoding='utf-8') as f:
+		json.dump(dates_arr, f, ensure_ascii=False, indent=4)
+	print('JSON for filepath: {1} created successfully.'.format(filepath))
