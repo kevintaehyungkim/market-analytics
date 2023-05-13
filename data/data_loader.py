@@ -1,103 +1,125 @@
+import json
 import sys
+
 sys.path.append('../')
 
-import api.api_utils as api_utils
 
-from collections import OrderedDict
+# DIA - dow jones
+# IYT = dow jones transportation
+# UUP = USD
 
 tickers = ['SPY', 'DIA', 'IYT', 'VXX', 'UUP', 'JNK', 'IEF', 'TLT', 'OILK', 'GLD']
 data_map = []
 
-MARKET_DATES = api_utils.load_json('raw/stock_dates.json')
 
-SPY_DAILY = api_utils.load_json('raw/SPY_daily_data.json')
-SPY_20EMA = api_utils.load_json('raw/SPY_20ema_data.json')
-SPY_50EMA = api_utils.load_json('raw/SPY_50ema_data.json')
-SPY_100EMA = api_utils.load_json('raw/SPY_100ema_data.json')
-# SPY_200EMA = api_utils.load_json('raw/SPY_200ema_data.json')
-SPY_MACD = api_utils.load_json('raw/SPY_macd_data.json')
-SPY_RSI = api_utils.load_json('raw/SPY_rsi_data.json')
+def load_json(filepath): 
+	f = open(filepath)
+	data = json.load(f) 
+	return data
 
 
-DIA_DAILY = api_utils.load_json('raw/DIA_daily_data.json')
-DIA_20EMA = api_utils.load_json('raw/DIA_20ema_data.json')
-DIA_50EMA = api_utils.load_json('raw/DIA_50ema_data.json')
-DIA_100EMA = api_utils.load_json('raw/DIA_100ema_data.json')
-# DIA_200EMA = api_utils.load_json('raw/DIA_200ema_data.json')
-DIA_MACD = api_utils.load_json('raw/DIA_macd_data.json')
-DIA_RSI = api_utils.load_json('raw/DIA_rsi_data.json')
+MARKET_DATES = load_json('raw/stock_dates.json')
+
+SPY_DAILY = load_json('raw/SPY_daily_data.json')
+SPY_20EMA = load_json('raw/SPY_20ema_data.json')
+SPY_50EMA = load_json('raw/SPY_50ema_data.json')
+SPY_100EMA = load_json('raw/SPY_100ema_data.json')
+# SPY_200EMA = load_json('raw/SPY_200ema_data.json')
+SPY_MACD = load_json('raw/SPY_macd_data.json')
+SPY_RSI = load_json('raw/SPY_rsi_data.json')
+
+SPY_1H_TIMESTAMPS = load_json('raw/SPY/1h/timestamps.json')
+SPY_1H_PRICES = load_json('raw/SPY/1h/prices.json')
+SPY_1H_MACD = load_json('raw/SPY/1h/macd2.json')
+SPY_1H_RSI = load_json('raw/SPY/1h/rsi.json')
+
+SPY_1H_EMA100 = load_json('raw/SPY/1h/100ema.json')
+SPY_1H_EMA200 = load_json('raw/SPY/1h/200ema.json')
+
+SPY_1H_EMA100_2 = load_json('raw/SPY/1h/100ema2.json')
+SPY_1H_EMA200_2 = load_json('raw/SPY/1h/200ema2.json')
 
 
-IYT_DAILY = api_utils.load_json('raw/IYT_daily_data.json')
-IYT_20EMA = api_utils.load_json('raw/IYT_20ema_data.json')
-IYT_50EMA = api_utils.load_json('raw/IYT_50ema_data.json')
-IYT_100EMA = api_utils.load_json('raw/IYT_100ema_data.json')
-# IYT_200EMA = api_utils.load_json('raw/IYT_200ema_data.json')
-IYT_MACD = api_utils.load_json('raw/IYT_macd_data.json')
-IYT_RSI = api_utils.load_json('raw/IYT_rsi_data.json')
+
+DIA_DAILY = load_json('raw/DIA_daily_data.json')
+DIA_20EMA = load_json('raw/DIA_20ema_data.json')
+DIA_50EMA = load_json('raw/DIA_50ema_data.json')
+DIA_100EMA = load_json('raw/DIA_100ema_data.json')
+# DIA_200EMA = load_json('raw/DIA_200ema_data.json')
+DIA_MACD = load_json('raw/DIA_macd_data.json')
+DIA_RSI = load_json('raw/DIA_rsi_data.json')
 
 
-VXX_DAILY = api_utils.load_json('raw/VXX_daily_data.json')
-VXX_20EMA = api_utils.load_json('raw/VXX_20ema_data.json')
-VXX_50EMA = api_utils.load_json('raw/VXX_50ema_data.json')
-VXX_100EMA = api_utils.load_json('raw/VXX_100ema_data.json')
-# VXX_200EMA = api_utils.load_json('raw/VXX_200ema_data.json')
-VXX_MACD = api_utils.load_json('raw/VXX_macd_data.json')
-VXX_RSI = api_utils.load_json('raw/VXX_rsi_data.json')
+IYT_DAILY = load_json('raw/IYT_daily_data.json')
+IYT_20EMA = load_json('raw/IYT_20ema_data.json')
+IYT_50EMA = load_json('raw/IYT_50ema_data.json')
+IYT_100EMA = load_json('raw/IYT_100ema_data.json')
+# IYT_200EMA = load_json('raw/IYT_200ema_data.json')
+IYT_MACD = load_json('raw/IYT_macd_data.json')
+IYT_RSI = load_json('raw/IYT_rsi_data.json')
 
 
-UUP_DAILY = api_utils.load_json('raw/UUP_daily_data.json')
-UUP_20EMA = api_utils.load_json('raw/UUP_20ema_data.json')
-UUP_50EMA = api_utils.load_json('raw/UUP_50ema_data.json')
-UUP_100EMA = api_utils.load_json('raw/UUP_100ema_data.json')
-# UUP_200EMA = api_utils.load_json('raw/UUP_200ema_data.json')
-UUP_MACD = api_utils.load_json('raw/UUP_macd_data.json')
-UUP_RSI = api_utils.load_json('raw/UUP_rsi_data.json')
+VXX_DAILY = load_json('raw/VXX_daily_data.json')
+VXX_20EMA = load_json('raw/VXX_20ema_data.json')
+VXX_50EMA = load_json('raw/VXX_50ema_data.json')
+VXX_100EMA = load_json('raw/VXX_100ema_data.json')
+# VXX_200EMA = load_json('raw/VXX_200ema_data.json')
+VXX_MACD = load_json('raw/VXX_macd_data.json')
+VXX_RSI = load_json('raw/VXX_rsi_data.json')
 
 
-JNK_DAILY = api_utils.load_json('raw/JNK_daily_data.json')
-JNK_20EMA = api_utils.load_json('raw/JNK_20ema_data.json')
-JNK_50EMA = api_utils.load_json('raw/JNK_50ema_data.json')
-JNK_100EMA = api_utils.load_json('raw/JNK_100ema_data.json')
-# JNK_200EMA = api_utils.load_json('raw/JNK_200ema_data.json')
-JNK_MACD = api_utils.load_json('raw/JNK_macd_data.json')
-JNK_RSI = api_utils.load_json('raw/JNK_rsi_data.json')
+UUP_DAILY = load_json('raw/UUP_daily_data.json')
+UUP_20EMA = load_json('raw/UUP_20ema_data.json')
+UUP_50EMA = load_json('raw/UUP_50ema_data.json')
+UUP_100EMA = load_json('raw/UUP_100ema_data.json')
+# UUP_200EMA = load_json('raw/UUP_200ema_data.json')
+UUP_MACD = load_json('raw/UUP_macd_data.json')
+UUP_RSI = load_json('raw/UUP_rsi_data.json')
 
 
-IEF_DAILY = api_utils.load_json('raw/IEF_daily_data.json')
-IEF_20EMA = api_utils.load_json('raw/IEF_20ema_data.json')
-IEF_50EMA = api_utils.load_json('raw/IEF_50ema_data.json')
-IEF_100EMA = api_utils.load_json('raw/IEF_100ema_data.json')
-# IEF_200EMA = api_utils.load_json('raw/IEF_200ema_data.json')
-IEF_MACD = api_utils.load_json('raw/IEF_macd_data.json')
-IEF_RSI = api_utils.load_json('raw/IEF_rsi_data.json')
+JNK_DAILY = load_json('raw/JNK_daily_data.json')
+JNK_20EMA = load_json('raw/JNK_20ema_data.json')
+JNK_50EMA = load_json('raw/JNK_50ema_data.json')
+JNK_100EMA = load_json('raw/JNK_100ema_data.json')
+# JNK_200EMA = load_json('raw/JNK_200ema_data.json')
+JNK_MACD = load_json('raw/JNK_macd_data.json')
+JNK_RSI = load_json('raw/JNK_rsi_data.json')
 
 
-TLT_DAILY = api_utils.load_json('raw/TLT_daily_data.json')
-TLT_20EMA = api_utils.load_json('raw/TLT_20ema_data.json')
-TLT_50EMA = api_utils.load_json('raw/TLT_50ema_data.json')
-TLT_100EMA = api_utils.load_json('raw/TLT_100ema_data.json')
-# TLT_200EMA = api_utils.load_json('raw/TLT_200ema_data.json')
-TLT_MACD = api_utils.load_json('raw/TLT_macd_data.json')
-TLT_RSI = api_utils.load_json('raw/TLT_rsi_data.json')
+IEF_DAILY = load_json('raw/IEF_daily_data.json')
+IEF_20EMA = load_json('raw/IEF_20ema_data.json')
+IEF_50EMA = load_json('raw/IEF_50ema_data.json')
+IEF_100EMA = load_json('raw/IEF_100ema_data.json')
+# IEF_200EMA = load_json('raw/IEF_200ema_data.json')
+IEF_MACD = load_json('raw/IEF_macd_data.json')
+IEF_RSI = load_json('raw/IEF_rsi_data.json')
 
 
-OILK_DAILY = api_utils.load_json('raw/OILK_daily_data.json')
-OILK_20EMA = api_utils.load_json('raw/OILK_20ema_data.json')
-OILK_50EMA = api_utils.load_json('raw/OILK_50ema_data.json')
-OILK_100EMA = api_utils.load_json('raw/OILK_100ema_data.json')
-# OILK_200EMA = api_utils.load_json('raw/OILK_200ema_data.json')
-OILK_MACD = api_utils.load_json('raw/OILK_macd_data.json')
-OILK_RSI = api_utils.load_json('raw/OILK_rsi_data.json')
+TLT_DAILY = load_json('raw/TLT_daily_data.json')
+TLT_20EMA = load_json('raw/TLT_20ema_data.json')
+TLT_50EMA = load_json('raw/TLT_50ema_data.json')
+TLT_100EMA = load_json('raw/TLT_100ema_data.json')
+# TLT_200EMA = load_json('raw/TLT_200ema_data.json')
+TLT_MACD = load_json('raw/TLT_macd_data.json')
+TLT_RSI = load_json('raw/TLT_rsi_data.json')
 
 
-GLD_DAILY = api_utils.load_json('raw/GLD_daily_data.json')
-GLD_20EMA = api_utils.load_json('raw/GLD_20ema_data.json')
-GLD_50EMA = api_utils.load_json('raw/GLD_50ema_data.json')
-GLD_100EMA = api_utils.load_json('raw/GLD_100ema_data.json')
-# GLD_200EMA = api_utils.load_json('raw/GLD_200ema_data.json')
-GLD_MACD = api_utils.load_json('raw/GLD_macd_data.json')
-GLD_RSI = api_utils.load_json('raw/GLD_rsi_data.json')
+OILK_DAILY = load_json('raw/OILK_daily_data.json')
+OILK_20EMA = load_json('raw/OILK_20ema_data.json')
+OILK_50EMA = load_json('raw/OILK_50ema_data.json')
+OILK_100EMA = load_json('raw/OILK_100ema_data.json')
+# OILK_200EMA = load_json('raw/OILK_200ema_data.json')
+OILK_MACD = load_json('raw/OILK_macd_data.json')
+OILK_RSI = load_json('raw/OILK_rsi_data.json')
+
+
+GLD_DAILY = load_json('raw/GLD_daily_data.json')
+GLD_20EMA = load_json('raw/GLD_20ema_data.json')
+GLD_50EMA = load_json('raw/GLD_50ema_data.json')
+GLD_100EMA = load_json('raw/GLD_100ema_data.json')
+# GLD_200EMA = load_json('raw/GLD_200ema_data.json')
+GLD_MACD = load_json('raw/GLD_macd_data.json')
+GLD_RSI = load_json('raw/GLD_rsi_data.json')
 
 DATA_MAP = {
 'SPY' : {'DAILY': SPY_DAILY, 'EMA20': SPY_20EMA, 'EMA50': SPY_50EMA, 'EMA100': SPY_100EMA, 'MACD': SPY_MACD, 'RSI': SPY_RSI },
@@ -114,16 +136,14 @@ DATA_MAP = {
 
 
 
-
-
 # for ticker in tickers:
 # 	print("\n")
-# 	print (ticker + "_DAILY = " + "api_utils.load_json('raw/" + ticker + "_daily_data.json')")
-# 	print (ticker + "_20EMA = " + "api_utils.load_json('raw/" + ticker + "_20ema_data.json')")
-# 	print (ticker + "_50EMA = " + "api_utils.load_json('raw/" + ticker + "_50ema_data.json')")
-# 	print (ticker + "_100EMA = " + "api_utils.load_json('raw/" + ticker + "_100ema_data.json')")
-# 	print (ticker + "_MACD = " + "api_utils.load_json('raw/" + ticker + "_macd_data.json')")
-# 	print (ticker + "_RSI = " + "api_utils.load_json('raw/" + ticker + "_rsi_data.json')")
+# 	print (ticker + "_DAILY = " + "load_json('raw/" + ticker + "_daily_data.json')")
+# 	print (ticker + "_20EMA = " + "load_json('raw/" + ticker + "_20ema_data.json')")
+# 	print (ticker + "_50EMA = " + "load_json('raw/" + ticker + "_50ema_data.json')")
+# 	print (ticker + "_100EMA = " + "load_json('raw/" + ticker + "_100ema_data.json')")
+# 	print (ticker + "_MACD = " + "load_json('raw/" + ticker + "_macd_data.json')")
+# 	print (ticker + "_RSI = " + "load_json('raw/" + ticker + "_rsi_data.json')")
 
 # print ("data_map = {")
 # for ticker in tickers:
